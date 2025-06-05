@@ -53,6 +53,8 @@ app.get('/rest/api/3/issue/:issueKey', (req, res) => {
     console.log('Issue details requested for:', req.params.issueKey);
     res.json({
         key: req.params.issueKey,
+        id: '1234567890',
+        self: `http://${process.env.JIRA_BASE_URL}:${process.env.PORT || 3000}/rest/api/3/issue/${req.params.issueKey}`,
         fields: {
             attachment: [
                 {
@@ -64,6 +66,8 @@ app.get('/rest/api/3/issue/:issueKey', (req, res) => {
                 }
             ],
             status: {
+                id: '1234567890',
+                self: `http://${process.env.JIRA_BASE_URL}:${process.env.PORT || 3000}/rest/api/3/status/1234567890`,
                 name: 'Ready to pay'
             },
             customfield_10001: 'Custom Value 1',
@@ -86,6 +90,56 @@ app.get('/rest/api/3/issue/:issueKey', (req, res) => {
             ]
         }
     });
+});
+
+// Approval endpoints
+app.get('/rest/servicedeskapi/request/:issueKey/approval', async (req, res) => {
+    console.log('Service Desk Approval details requested for:', req.params.issueKey);
+    res.json({
+        _links: {
+            self: `http://${process.env.JIRA_BASE_URL}:${process.env.PORT || 3000}/rest/servicedeskapi/request/req.params.issueKey/approval`
+        },
+        values: [
+            {
+                id: 1234567890,
+                name: 'Pending Approval',
+                finalDecision: 'approved',
+                canAnswerApproval: false,
+                approvers: [
+                    {
+                        approver: {
+                            accountId: '100:1234567890',
+                            displayName: 'John Smith',
+                            active: true,
+                            timeZone: 'Australia/Sydney',
+                            _links: {
+                                self: `http://${process.env.JIRA_BASE_URL}:${process.env.PORT || 3000}/rest/api/2/user?accountId=100:1234567890`,
+                                avatarUrls: {
+                                    '48x48': 'https://gravatar.com/avatar'
+                                }
+                            },
+                            approverDecision: 'approved'
+                        }
+                    }
+                ],
+                createdDate: {
+                    iso8601: '2024-09-18T13:06:41+1000',
+                    jira: '2024-09-18T13:06:41.485+1000',
+                    friendly: '18/Sep/24 1:06 PM',
+                    epochMillis: 1726628801485
+                },
+                completedDate: {
+                    iso8601: '2024-09-19T14:56:08+1000',
+                    jira: '2024-09-19T14:56:08.618+1000', 
+                    friendly: '19/Sep/24 2:56 PM',
+                    epochMillis: 1726721768618
+                },
+                _links: {
+                    self: `http://${process.env.JIRA_BASE_URL}:${process.env.PORT || 3000}/rest/servicedeskapi/request/:issueKey/approval/1234567890`
+                }
+            }
+        ],
+    })
 });
 
 
